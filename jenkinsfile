@@ -1,0 +1,48 @@
+pipeline {
+
+  environment {
+    dockerimagename = "tukaramrathod02/node-app1"
+    dockerImage = ""
+  }
+
+  agent any
+
+  stages {
+
+    stage('Checkout Source') {
+      steps {
+        git 'https://github.com/Tukaram-Rathod/notes-app-cicd.git'
+      }
+    }
+
+    stage('Build image') {
+      steps{
+        script {
+          dockerImage = docker.build dockerimagename
+        }
+      }
+    }
+
+    stage('Pushing Image') {
+      environment {
+               registryCredential = 'DockerHub_Crediential'
+           }
+      steps{
+        script {
+          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+            dockerImage.push("latest")
+          }
+        }
+      }
+    }
+
+    stage('Deploying node-app container to Kubernetes') {
+      steps {
+        script {
+          kubernetesDeploy(configs: "deployment.yaml", "service.yaml")
+        }
+      }
+    }
+  }
+
+}
