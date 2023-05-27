@@ -11,7 +11,7 @@ pipeline {
 
     stage('Checkout Source') {
       steps {
-        git 'https://github.com/Tukaram-Rathod/notes-app-cicd.git'
+        git 'https://github.com/Tukaram-Rathod/node-app-jenkin-pipe.git'
       }
     }
 
